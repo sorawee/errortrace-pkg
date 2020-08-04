@@ -3,7 +3,6 @@
 (provide setup)
 (require racket/string
          racket/match
-         errortrace/zo-compile
          setup/dirs
          pkg/path
          custom-load)
@@ -23,7 +22,4 @@
         [else
          (match (path->pkg path)
            [#f #t]
-           [pkg-name (member pkg-name pkgs)])]))))
-  (current-compile zo-compile)
-  (error-display-handler (dynamic-require 'errortrace/errortrace-lib
-                                          'errortrace-error-display-handler)))
+           [pkg-name (member pkg-name pkgs)])])))))

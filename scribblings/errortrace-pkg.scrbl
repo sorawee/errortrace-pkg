@@ -47,21 +47,26 @@ This package allows users to use @racketmodname[errortrace] on installed package
 @itemize[
          @item{If your program has a module file @nonterm{prog}, run it with
 
-               @commandline{racket -l errortrace-pkg -t @nonterm{prog} -- [--errortrace-pkg @nonterm{pkg}] ... @nonterm{rest-arg} ...}}
+               @commandline{racket -l errortrace -l errortrace-pkg -t @nonterm{prog} -- [--errortrace-pkg @nonterm{pkg}] ... @nonterm{rest-arg} ...}}
 
          @item{If your program is a non-module top-level sequence of
                definitions and expressions, add:
                @racketblock[
-                 (require errortrace-pkg/lib)
+                 (require errortrace
+                          errortrace-pkg/lib)
                  (setup _pkgs)
                ]
                where @racket[_pkgs] is a list of package names. See @racket[setup] for details.
+
+               Alternatively, run the program with
+
+               @commandline{racket -l racket/init -l errortrace -l errortrace-pkg -t @nonterm{prog} -- [--errortrace-pkg @nonterm{pkg}] ... @nonterm{rest-arg} ...}
                }
 
          @item{If you have no main program and you want to use
                Racket interactively, include the @Flag{i} flag
                before @Flag{l}:
-               @commandline{racket -i -l errortrace-pkg -- [--errortrace-pkg @nonterm{pkg}] ... @nonterm{rest-arg} ...}}
+               @commandline{racket -i -l errortrace -l errortrace-pkg -- [--errortrace-pkg @nonterm{pkg}] ... @nonterm{rest-arg} ...}}
          ]
 
 After starting @racketmodname[errortrace-pkg] in one of these ways, when an
@@ -74,15 +79,14 @@ module is meant to be invoked from the top-level, so that it can install
 an evaluation handler, exception handler, etc.
 
 Unlike errortrace, there is no need to remove the @filepath{compiled} directory
-before running programs.
+before running programs. All non-package program will be instrumented.
 
 @section{API}
 
 @defmodule[errortrace-pkg/lib]
 
 @defproc[(setup (pkgs (listof string?))) void?]{
-  This function installs an evaluation handler, exception handler, etc.
-  so that errortrace works. The errortrace will instrument code for non-packages
+  This function installs a handler so that errortrace instruments code for non-packages
   and only packages specified in @racket[pkgs].
 
   Only call this function when the running program is @emph{not} a module.
@@ -95,6 +99,8 @@ before running programs.
 Following program @filepath{test.rkt} is a reduced version of @url{https://gist.github.com/anentropic/976121f288e7f0a2e91e8de082f44096}
 
 @codeblock{
+#lang racket
+
 (require datalog)
 
 (define (make-echo-hash)
@@ -156,7 +162,7 @@ The problem in this case is that the datalog module is not instrumented by error
 so errortrace could not provide any useful information to us.
 
 Instead, errortrace-pkg could be used to help with this kind of situation.
-Running @commandline{racket -l errortrace-pkg -t test.rkt -- --errortrace-pkg datalog} results in:
+Running @commandline{racket -l errortrace -l errortrace-pkg -t test.rkt -- --errortrace-pkg datalog} results in:
 
 @as-error{
 for-each: contract violation
