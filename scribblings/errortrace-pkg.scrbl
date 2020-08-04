@@ -56,11 +56,14 @@ This package allows users to use @racketmodname[errortrace] on installed package
                           errortrace-pkg/lib)
                  (setup _pkgs)
                ]
-               where @racket[_pkgs] is a list of package names. See @racket[setup] for details.
+               to the beginning of your program, where @racket[_pkgs] is a list of package names
+               (see @racket[setup] for details). Then, run it normally with:
+
+               @commandline{racket -f @nonterm{prog}}
 
                Alternatively, run the program with
 
-               @commandline{racket -l racket/init -l errortrace -l errortrace-pkg -t @nonterm{prog} -- [--errortrace-pkg @nonterm{pkg}] ... @nonterm{rest-arg} ...}
+               @commandline{racket -l racket/init -l errortrace -l errortrace-pkg -f @nonterm{prog} -- [--errortrace-pkg @nonterm{pkg}] ... @nonterm{rest-arg} ...}
                }
 
          @item{If you have no main program and you want to use
