@@ -7,3 +7,4 @@
 (define pkg-desc "Errortrace installed packages")
 (define version "0.0")
 (define pkg-authors '(sorawee))
+(define license '(Apache-2.0 OR MIT))
